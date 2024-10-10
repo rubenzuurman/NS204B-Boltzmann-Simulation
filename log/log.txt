@@ -1,0 +1,8 @@
+10-10-2024
+20.18
+Create repository.
+
+20.25
+Create virtual environment.
+Create src/application.py containing basic code to test if it runs.
+Pip freeze into requirements.txt.
