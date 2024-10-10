@@ -6,3 +6,15 @@ Create repository.
 Create virtual environment.
 Create src/application.py containing basic code to test if it runs.
 Pip freeze into requirements.txt.
+
+20.28
+Committed initial code and stuff.
+
+20.53
+Implemented simulation.
+
+21.16
+Implemented calculate of <N_n>, <(N_n)^2>, and <P_n>.
+
+21.17
+Generated bar chart of resulting probability distribution.
