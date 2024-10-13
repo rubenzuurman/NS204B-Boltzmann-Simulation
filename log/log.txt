@@ -18,3 +18,16 @@ Implemented calculate of <N_n>, <(N_n)^2>, and <P_n>.
 
 21.17
 Generated bar chart of resulting probability distribution.
+
+21.24
+Committed changes to repo.
+
+13-10-2024
+15.52 Start
+To do: Generate plot of 4 simulations with entropy vs sweep number.
+
+16.34
+I have 4 plot of the entropy vs sweep number. Thermalization seems to happen quicker the more sites/quanta there are. Multiplying both values by 10 makes thermalization occur quicker e.g.
+
+17.12
+Observation: When N<<M, thermalization doesn't really happen since the quanta are just hopping around.
