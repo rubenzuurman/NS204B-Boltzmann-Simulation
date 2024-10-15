@@ -31,3 +31,24 @@ I have 4 plot of the entropy vs sweep number. Thermalization seems to happen qui
 
 17.12
 Observation: When N<<M, thermalization doesn't really happen since the quanta are just hopping around.
+
+17.24
+Committed the changes.
+
+15-10-2024
+14.24 Start
+To do:
+    Make entropy plots pretty.
+        - Labels on axes.
+        - Custom legend specifying M and N.
+        - Log or normal axis scale?
+        - Axis limits.
+        - Change colors.
+    Work on report
+
+15.08
+Labels are on axes. Custom legends are in, but sometimes overlap with the graph. Maybe I'll just leave it like that and we'll discuss it tomorrow. Axis limits are fine as they are I think, they are also related to the custom legend, since the y limits will determine if there is overlap.
+I'll look at better colors now, after that I'll work on the report.
+
+15.13
+Plots have better colors now imo. Axis limits are default. I left in the code for calculating the y limits dynamically from the data, but this code doesn't work well.

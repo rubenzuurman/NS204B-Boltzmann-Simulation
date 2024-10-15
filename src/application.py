@@ -146,11 +146,24 @@ def main():
     simulation_data = analyse_results(simulation_data)
     
     # Plot the results.
-    fig, axs = plt.subplots(nrows=2, ncols=2)
+    fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 12))
     
     for index, params in simulation_data.items():
-        axs[index % 2][index // 2].plot(params["sweep_entropies"].keys(), params["sweep_entropies"].values())
-        axs[index % 2][index // 2].set_title(f"M={params["num_sites"]} N={params["num_quanta"]}")
+        # Plot data.
+        axs[index % 2][index // 2].plot(params["sweep_entropies"].keys(), params["sweep_entropies"].values(), label=f"M={params["num_sites"]} N={params["num_quanta"]}", color="blue")
+        
+        # Set axis labels.
+        axs[index % 2][index // 2].set_xlabel("Sweep Number")
+        axs[index % 2][index // 2].set_ylabel("Entropy")
+        
+        # Set axis limits.
+        #min_ylim = float(f"{min(params["sweep_entropies"].values()):.1g}")
+        #max_ylim = float(f"{max(params["sweep_entropies"].values()):.1g}")
+        
+        # Add minimal legend indicating simulation parameters.
+        legend = axs[index % 2][index // 2].legend(handlelength=0, handletextpad=0, fancybox=True, loc="upper left")
+        for item in legend.legend_handles:
+            item.set_visible(False)
     
     fig.tight_layout()
     fig.savefig("test.png")
