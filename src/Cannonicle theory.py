@@ -1,3 +1,5 @@
+# Runtime on Ryzen 9 5900x: 4.6 seconds
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random

@@ -1,4 +1,4 @@
-
+# Runtime on Ryzen 9 5900x: 52.9 seconds
 
 # -*- coding: utf-8 -*-
 """

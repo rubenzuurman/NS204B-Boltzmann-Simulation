@@ -1,3 +1,5 @@
+# Runtime on Ryzen 9 5900x: 52.5 seconds
+
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 23 22:53:28 2024
