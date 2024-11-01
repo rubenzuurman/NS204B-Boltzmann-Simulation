@@ -3,7 +3,13 @@ import random as rnd
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Set font size for plots.
+plt.rcParams.update({'font.size': 20})
+
 BOLTZMANN_CONSTANT = 1.38e-23
+
+PRIMARY_COLOR = "royalblue"
+SECONDARY_COLOR = "indianred"
 
 def attempt_exchange(sites):
     """
@@ -117,21 +123,17 @@ def analyse_results(simulation_data):
     
     # Return simulation data dictionary.
     return simulation_data
-    
-def main():
-    # Set random seed.
-    RANDOM_SEED = 1234
-    rnd.seed(RANDOM_SEED)
-    
+
+def generate_entropy_over_time_plots():
     # Simulation parameters (will be passed around in the functions).
     num_sweeps = 200
     
     # Initialize simulation parameters.
     simulation_parameters = [
-        {"num_sites": 1000, "num_quanta": 1000, "num_sweeps": num_sweeps}, 
-        {"num_sites": 50000, "num_quanta": 1000, "num_sweeps": num_sweeps}, 
-        {"num_sites": 1000, "num_quanta": 50000, "num_sweeps": num_sweeps}, 
-        {"num_sites": 50000, "num_quanta": 50000, "num_sweeps": num_sweeps}, 
+        {"num_sites": 10, "num_quanta": 10, "num_sweeps": num_sweeps}, 
+        {"num_sites": 500, "num_quanta": 10, "num_sweeps": num_sweeps}, 
+        {"num_sites": 10, "num_quanta": 500, "num_sweeps": num_sweeps}, 
+        {"num_sites": 500, "num_quanta": 500, "num_sweeps": num_sweeps}, 
     ]
     
     # Copy simulation parameters to another dictionary. This dictionary will also contain the sweep_bincounts and entropy for every simulation.
@@ -145,28 +147,103 @@ def main():
     # Analyse simulation results. This function adds analysis results to the keys already present in the simulation_data dictionary.
     simulation_data = analyse_results(simulation_data)
     
-    # Plot the results.
+    # Plot entropy evolution of several simulation parameters (N and M).
     fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 12))
     
     for index, params in simulation_data.items():
         # Plot data.
-        axs[index % 2][index // 2].plot(params["sweep_entropies"].keys(), params["sweep_entropies"].values(), label=f"M={params["num_sites"]} N={params["num_quanta"]}", color="blue")
+        axs[index % 2][index // 2].plot(params["sweep_entropies"].keys(), [x / BOLTZMANN_CONSTANT for x in params["sweep_entropies"].values()], label=f"M={params["num_sites"]} N={params["num_quanta"]}", color=PRIMARY_COLOR)
         
         # Set axis labels.
         axs[index % 2][index // 2].set_xlabel("Sweep Number")
-        axs[index % 2][index // 2].set_ylabel("Entropy")
+        axs[index % 2][index // 2].set_ylabel("Entropy $\\frac{S}{k_B}$")
         
         # Set axis limits.
         #min_ylim = float(f"{min(params["sweep_entropies"].values()):.1g}")
         #max_ylim = float(f"{max(params["sweep_entropies"].values()):.1g}")
+        axs[index % 2][index // 2].set_xlim([0, 200])
         
         # Add minimal legend indicating simulation parameters.
-        legend = axs[index % 2][index // 2].legend(handlelength=0, handletextpad=0, fancybox=True, loc="upper left")
+        legend = axs[index % 2][index // 2].legend(handlelength=0, handletextpad=0, fancybox=True, loc="lower right")
         for item in legend.legend_handles:
             item.set_visible(False)
     
     fig.tight_layout()
-    fig.savefig("test.png")
+    fig.savefig("entropy_over_time.png")
+
+def generate_boltzmann_bar_chart():
+    # Simulation parameters (will be passed around in the functions).
+    num_sweeps = 200
+    
+    # Initialize simulation parameters.
+    simulation_parameters = [
+        {"num_sites": 20, "num_quanta": 20, "num_sweeps": num_sweeps}
+    ]
+    
+    # Copy simulation parameters to another dictionary. This dictionary will also contain the sweep_bincounts and entropy for every simulation.
+    simulation_data = {index: {k: v for k, v in d.items()} for index, d in enumerate(simulation_parameters)}
+    
+    # Execute simulations.
+    for index, params in simulation_data.items():
+        sweep_bincounts = simulate(num_sites=params["num_sites"], num_quanta=params["num_quanta"], num_sweeps=params["num_sweeps"])
+        simulation_data[index]["sweep_bincounts"] = sweep_bincounts
+    
+    # Analyse simulation results. This function adds analysis results to the keys already present in the simulation_data dictionary.
+    simulation_data = analyse_results(simulation_data)
+    
+    num_squanta = simulation_data[0]["num_quanta"]
+    
+    # Plot bar chart of last sweep against Boltzmann bar chart on the left, and entropy over sweeps on the right to verify thermalization.
+    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+    
+    # Calculate probability distribution from bincounts over the last 100 sweeps. Aka calculate the total number of occurrences of 0 quanta at any site at any sweep, the total number of occurrences of 1 quanta at any site at any sweep, etc. Then normalize this distribution to make it a valid probability distribution.
+    max_quanta_at_any_site = max([len(sweep_bincounts) for index, sweep_bincounts in simulation_data[0]["sweep_bincounts"].items() if index >= 100])
+    bincounts_total = [0 for _ in range(max_quanta_at_any_site)]
+    for index, sweep_bincount in simulation_data[0]["sweep_bincounts"].items():
+        if index < 100:
+            continue
+        
+        for num_quanta, occurrences in enumerate(sweep_bincount):
+            bincounts_total[num_quanta] += occurrences
+    
+    # Normalize the distribution.
+    simulation_probability_dist = list(bincounts_total / sum(bincounts_total))
+    
+    # Appends zeros to end of prob dist to make sure all possible numbers of quanta are present.
+    simulation_probability_dist.extend([0] * (num_squanta + 1 - len(simulation_probability_dist)))
+    
+    # Calculate the theoretical Boltzmann distribution from the Boltzmann factor for every number of quanta and the partition function. (I don't know what beta is so I'm setting it to 1 in case it matters. Maybe we fit beta?)
+    beta = 0.66
+    partition_function = sum([np.exp(-beta * n) for n in range(num_squanta + 1)])
+    theoretical_probability_dist = [np.exp(-beta * n) / partition_function for n in range(num_squanta + 1)]
+    
+    #print(simulation_data[0]["sweep_bincounts"][num_sweeps - 1])
+    bar_chart_x = list(range(0, num_squanta + 1))
+    #bar_chart_height = simulation_data[0]["sweep_bincounts"][num_sweeps - 1] / sum(simulation_data[0]["sweep_bincounts"][num_sweeps - 1])
+    axs[0].bar([x - 0.225 for x in bar_chart_x], theoretical_probability_dist, width=0.4, label="Theory", color=PRIMARY_COLOR)
+    axs[0].bar([x + 0.225 for x in bar_chart_x], simulation_probability_dist, width=0.4, label="Simulation", color=SECONDARY_COLOR)
+    axs[0].set_xlabel("Number of Quanta")
+    axs[0].set_ylabel("Probability")
+    axs[0].legend()
+    
+    axs[1].plot(simulation_data[0]["sweep_entropies"].keys(), [x / BOLTZMANN_CONSTANT for x in simulation_data[0]["sweep_entropies"].values()], color=PRIMARY_COLOR)
+    axs[1].set_xlabel("Sweep Number")
+    axs[1].set_ylabel("Entropy $\\frac{S}{k_B}$")
+    axs[1].set_xlim([0, 200])
+    
+    fig.tight_layout()
+    fig.savefig("boltzmann_bar_chart.png")
+
+def main():
+    # Set random seed.
+    RANDOM_SEED = 1234
+    rnd.seed(RANDOM_SEED)
+    
+    # Generate entropy over time plots.
+    generate_entropy_over_time_plots()
+    
+    # Generate bar chart of Boltzmann distribution vs simulation result.
+    generate_boltzmann_bar_chart()
 
 if __name__ == "__main__":
     main()

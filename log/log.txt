@@ -52,3 +52,34 @@ I'll look at better colors now, after that I'll work on the report.
 
 15.13
 Plots have better colors now imo. Axis limits are default. I left in the code for calculating the y limits dynamically from the data, but this code doesn't work well.
+
+15.18
+Committed changes.
+
+20-10-2024
+15.20 Start
+Today I'm implementing the Boltzmann distribution bar chart to verify that our simulation indeed follows a Boltzmann distribution and thus can be interpreted as a canonical emsemble.
+
+16.04
+Got a bar chart rendered with theoretical value and simulation results side by side in columns. One issue: The distribution doesn't match well for low N and M, but the bar chart is readable, and vice versa for high M and N.
+16.05 End
+
+17.57 Start
+To do: Attempt to fix beta parameter. Can merge other code in tomorrow.
+
+18.00
+Error is sum[(e^(-bn)/Z - sim_prob[n])^2]. Minimize error -> adjust beta so that error is closer to minimum. Since error is quadratic, b -= learning_rate * dE/db, e.g. positive slope -> move b left, negative slope -> move b right. dE/db = sum[2(e^(-bn)/Z - sim_prob[n]) * -b] = -2b * sum[(e^(-bn)/Z - sim_prob[n])].
+
+18.15
+This approach isn't actually working well. I think it would be easier to just eyeball a good beta. It doesn't really matter *what* beta is, as long as some beta exists that approximates the simulation distribution well.
+
+18.29
+Found a good (N, M) combination and a good beta for it. Also labelled the axes of the bar chart and entropy vs sweep number graph.
+
+18.32
+Changed axis labels for other graphs as well. Also changed all graphs so that S/k_B is plotted instead of S, this makes the axes a little bit cleaner in that there's no 1e-24 or 1e-23 above the y-axis. Changed all graphs to use "royalblue" as their primary color.
+
+18.37
+Made sure all plots have the same size and implemented global colors to enforce consistent colors.
+
+18.40 End

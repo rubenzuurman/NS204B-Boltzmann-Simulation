@@ -162,4 +162,7 @@ cython_debug/
 #.idea/
 
 # Custom
-test.png
+entropy_over_time.png
+entropy_over_time_bigtext.png
+boltzmann_bar_chart.png
+boltzmann_bar_chart_bigtext.png
