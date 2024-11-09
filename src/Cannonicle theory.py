@@ -1,3 +1,4 @@
+# Names: Quinten Schuttevaer, Ruben Zuurman
 # Runtime on Ryzen 9 5900x: 4.6 seconds
 
 import numpy as np

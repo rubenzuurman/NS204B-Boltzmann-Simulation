@@ -1,3 +1,4 @@
+# Names: Quinten Schuttevaer, Ruben Zuurman
 # Runtime on Ryzen 9 5900x: <1 second
 
 # -*- coding: utf-8 -*-

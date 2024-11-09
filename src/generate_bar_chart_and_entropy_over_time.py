@@ -1,3 +1,4 @@
+# Names: Quinten Schuttevaer, Ruben Zuurman
 # Runtime on Ryzen 9 5900x: 1.2 seconds
 # Generates entropy_over_time.png (the 2x2 plot of various combinations of M and N).
 # Generates boltzmann_bar_chart.png: The Boltzmann distribution bar chart and corresponding entropy over time chart proving (sort of) that it was thermalized when the bar chart was constructed.
